@@ -46,7 +46,9 @@ function normalize(options) {
     variant,
     noIcon: !!o.noIcon,
     iconClass: o.iconClass || '',
-    progressBar: !!o.progressBar
+    progressBar: !!o.progressBar,
+    extendedDelay: typeof o.extendedDelay === 'number' ? o.extendedDelay : 1000,
+    pauseOnHover: o.pauseOnHover !== false
   };
 }
 
@@ -64,10 +66,9 @@ function solidClasses(v){
 }
 
 // Attach a progress bar to the toast element if enabled
-function attachProgress(el, o, instance) {
-  if (!o.progressBar || !o.autohide || !(o.delay > 0)) return;
+function attachProgress(el, o) {
+  if (!o.progressBar || !o.autohide || !(o.delay > 0)) return null;
 
-  // Create track and fill using Bootstrap utility backgrounds
   const track = document.createElement('div');
   track.className = 'bt-progress-track bg-body-secondary';
   track.style.height = '2px';
@@ -75,7 +76,7 @@ function attachProgress(el, o, instance) {
   track.style.opacity = '0.6';
 
   const fill = document.createElement('div');
-  fill.className = `bt-progress-fill bg-${o.variant}`; // colored fill
+  fill.className = `bt-progress-fill bg-${o.variant}`;
   fill.style.height = '2px';
   fill.style.width = '100%';
 
@@ -83,23 +84,45 @@ function attachProgress(el, o, instance) {
   el.appendChild(track);
 
   let rafId = 0;
-  const start = performance.now();
-  const total = Math.max(1, o.delay);
+  let start = 0;
+  let duration = 0;
 
-  function step(now) {
+  function frame(now) {
     const elapsed = now - start;
-    const remaining = Math.max(0, 1 - (elapsed / total));
+    const remaining = Math.max(0, 1 - (elapsed / duration));
     fill.style.width = (remaining * 100).toFixed(2) + '%';
-    if (remaining > 0) {
-      rafId = requestAnimationFrame(step);
-    }
+    if (remaining > 0) rafId = requestAnimationFrame(frame);
   }
 
-  rafId = requestAnimationFrame(step);
+  function reset(newDuration) {
+    if (rafId) cancelAnimationFrame(rafId);
+    duration = Math.max(1, newDuration);
+    start = performance.now();
+    fill.style.width = '100%';
+    rafId = requestAnimationFrame(frame);
+  }
 
-  // Cleanup when the toast hides/disposes
-  const cleanup = () => { if (rafId) cancelAnimationFrame(rafId); };
-  el.addEventListener('hidden.bs.toast', cleanup, { once: true });
+  function pause() {
+    if (!rafId) return 0;
+    const now = performance.now();
+    const elapsed = now - start;
+    const remainingMs = Math.max(0, duration - elapsed);
+    cancelAnimationFrame(rafId);
+    rafId = 0;
+    return remainingMs;
+  }
+
+  function stop() {
+    if (rafId) cancelAnimationFrame(rafId);
+    rafId = 0;
+  }
+
+  el.addEventListener('hidden.bs.toast', stop, { once: true });
+
+  // kick off initial run
+  reset(o.delay);
+
+  return { reset, pause, stop };
 }
 
 function makeToastEl(text, o) {
@@ -182,9 +205,33 @@ export function show(text, options) {
   const container = getContainer(o.position);
   const el = makeToastEl(text, o);
   container.appendChild(el);
-  // Attach progress bar if needed
-  const instance = new bootstrap.Toast(el, { autohide: o.autohide, delay: o.delay });
-  attachProgress(el, o, instance);
+  const manageAuto = o.autohide && (o.pauseOnHover || (o.extendedDelay > 0));
+  const instance = new bootstrap.Toast(el, { autohide: manageAuto ? false : o.autohide, delay: o.delay });
+  const progressCtrl = attachProgress(el, o);
+
+  if (manageAuto) {
+    let hideTid = 0;
+    function startHide(ms) {
+      if (hideTid) clearTimeout(hideTid);
+      hideTid = setTimeout(() => instance.hide(), Math.max(0, ms));
+      if (progressCtrl) progressCtrl.reset(ms);
+    }
+
+    // Start initial countdown
+    startHide(o.delay);
+
+    if (o.pauseOnHover) {
+      el.addEventListener('mouseenter', () => {
+        if (hideTid) { clearTimeout(hideTid); hideTid = 0; }
+        if (progressCtrl) progressCtrl.pause();
+      });
+      el.addEventListener('mouseleave', () => {
+        const ext = typeof o.extendedDelay === 'number' ? o.extendedDelay : 1000;
+        startHide(ext);
+      });
+    }
+  }
+
   instance.show();
   el.addEventListener('hidden.bs.toast', () => el.remove(), { once: true });
 

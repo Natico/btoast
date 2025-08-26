@@ -72,7 +72,12 @@
               <div class="col-6">
                 <label class="form-label">Extended time out (ms)</label>
                 <input id="extendedDelay" type="number" class="form-control" value="1000" min="0" />
-                <div class="note mt-1">(will be enabled in the next step)</div>
+              </div>
+              <div class="col-12">
+                <div class="form-check mt-2">
+                  <input id="pauseOnHover" class="form-check-input" type="checkbox" checked />
+                  <label class="form-check-label" for="pauseOnHover">Pause on hover</label>
+                </div>
               </div>
               <div class="col-12 mt-2">
                 <div class="form-check">
@@ -100,7 +105,7 @@
       </div>
 
       <div class="note">
-        Note: This control page demonstrates automatic layout (inferred from title and icon settings) and basic options (title, message, position, variant, delay, dismissible, progress bar). Advanced features like prevent duplicates, newest on top, and extended timeout will be added in later versions.
+        Note: This control page demonstrates automatic layout (inferred from title and icon settings) and options including title, message, position, variant, delay, extended timeout, pause on hover, dismissible, and progress bar. Advanced features like prevent duplicates and newest on top will be added in later versions.
       </div>
     </div>
 
@@ -128,6 +133,7 @@
           const msg = $('#message').value.trim() || 'Sample message';
           const position = currentPos();
           const delay = parseInt($('#delay').value, 10) || 4000;
+          const extendedDelay = parseInt($('#extendedDelay').value, 10) || 1000;
           const dismissible = $('#dismissible').checked;
           const type = currentType();
 
@@ -135,6 +141,8 @@
             title,
             position,
             delay,
+            extendedDelay,
+            pauseOnHover: $('#pauseOnHover').checked,
             dismissible,
             progressBar: $('#progressBar').checked,
             noIcon: $('#noIcon').checked,
