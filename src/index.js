@@ -51,7 +51,8 @@ function normalize(options) {
     pauseOnHover: o.pauseOnHover !== false,
     preventDuplicates: !!o.preventDuplicates,
     dedupeKey: typeof o.dedupeKey === 'string' ? o.dedupeKey : '',
-    onDuplicate: o.onDuplicate === 'ignore' ? 'ignore' : 'reshow'
+    onDuplicate: o.onDuplicate === 'ignore' ? 'ignore' : 'reshow',
+    newestOnTop: !!o.newestOnTop,
   };
 }
 
@@ -232,7 +233,11 @@ export function show(text, options) {
 
   const el = makeToastEl(text, o);
   el.dataset.btKey = key;
-  container.appendChild(el);
+  if (o.newestOnTop && container.firstChild) {
+    container.insertBefore(el, container.firstChild);
+  } else {
+    container.appendChild(el);
+  }
   const manageAuto = o.autohide && (o.pauseOnHover || (o.extendedDelay > 0));
   const instance = new bootstrap.Toast(el, { autohide: manageAuto ? false : o.autohide, delay: o.delay });
   const progressCtrl = attachProgress(el, o);
