@@ -1,0 +1,82 @@
+
+
+// btoast theme & layout helpers
+// Assumes Bootstrap 5 utilities are available in the page
+// Imports
+@use 'variables' as *;
+
+// --- Generic toast cosmetics (kept light, we rely on Bootstrap utilities) ---
+// Ensure any colored header/body inherit the toast border radius nicely
+.toast {
+  border-radius: $bt-border-radius;
+  box-shadow: $bt-shadow;
+  overflow: hidden; // so header/body backgrounds clip to radius
+  margin: 0.25rem; // small margin so stacked toasts have breathing room
+
+  // When we render a single-row subtle message, keep spacing consistent
+  .toast-body {
+    // padding is already set by Bootstrap; this is a safety tweak
+    // (uncomment to enforce)
+    // padding: 0.75rem 0.875rem;
+  }
+
+  // If header is present (title-icon mode), tighten spacing a bit
+  .toast-header {
+    // padding already from Bootstrap; subtle nudge allowed
+    // padding: 0.5rem 0.75rem;
+    border: 0; // we theme backgrounds instead of borders
+  }
+}
+
+// --- Icon rail (icon mode) ---
+// Structure produced by JS: .toast > .d-flex.align-items-stretch > [rail] + .toast-body + [btn-close?]
+.toast {
+  .d-flex.align-items-stretch {
+    // Left rail gets the same rounded corners as the toast (LTR)
+    > :first-child {
+      border-top-left-radius: inherit;
+      border-bottom-left-radius: inherit;
+    }
+    // The body gets the right corners (LTR)
+    > .toast-body {
+      border-top-right-radius: inherit;
+      border-bottom-right-radius: inherit;
+    }
+  }
+}
+
+// If someone flips direction to RTL on the container, mirror the radii
+[dir='rtl'] .toast {
+  .d-flex.align-items-stretch {
+    > :first-child {
+      border-top-right-radius: inherit;
+      border-bottom-right-radius: inherit;
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+    }
+    > .toast-body {
+      border-top-left-radius: inherit;
+      border-bottom-left-radius: inherit;
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+  }
+}
+
+// --- Default icon sizing (paired with .bt-icon base in _icons.scss) ---
+.bt-icon {
+  width: $bt-icon-size;
+  height: $bt-icon-size;
+  margin-inline-end: $bt-icon-gap; // logical gap for LTR/RTL
+}
+
+// Optional helper: if a consumer wants slightly larger icons inside header rows
+.toast-header .bt-icon {
+  // uncomment to bump icon in header slightly
+  // width: calc(#{$bt-icon-size} + 0.125rem);
+  // height: calc(#{$bt-icon-size} + 0.125rem);
+}
+
+// --- Emphasis helpers (in case consumers need quick hooks) ---
+// We intentionally avoid redefining Bootstrap color utilities here.
+// Consumers can override Bootstrap CSS variables to theme subtle/solid colors.

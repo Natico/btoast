@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>btoast – Control Panel</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- btoast CSS -->
+    <link rel="stylesheet" href="../dist/btoast.css">
+    <style>
+      body{font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;}
+      .panel{max-width: 1060px; margin: 24px auto;}
+      .form-section{background:#fff; border:1px solid rgba(0,0,0,.08); border-radius:12px; padding:16px 18px;}
+      .footer-bar{min-height:40px}
+      .note{font-size:12px; opacity:.75}
+      .fw-label{min-width:120px; display:inline-block}
+    </style>
+  </head>
+  <body class="bg-light">
+    <div class="panel">
+      <h1 class="h3 mb-3">btoast – Control Test</h1>
+
+      <div class="form-section mb-3">
+        <div class="row g-3">
+          <div class="col-md-4">
+            <label class="form-label">Title</label>
+            <input id="title" type="text" class="form-control" placeholder="Enter a title ..." />
+
+            <label class="form-label mt-3">Message</label>
+            <textarea id="message" class="form-control" rows="5" placeholder="Enter a message ..."></textarea>
+
+            <div class="form-check mt-3">
+              <input id="dismissible" class="form-check-input" type="checkbox" checked />
+              <label class="form-check-label" for="dismissible">Close Button</label>
+            </div>
+
+            <div class="mt-4">
+              <div class="form-check">
+                <input id="noIcon" class="form-check-input" type="checkbox" />
+                <label class="form-check-label" for="noIcon">No icon</label>
+              </div>
+              <label class="form-label mt-2">Icon class (optional)</label>
+              <input id="iconClass" type="text" class="form-control" placeholder="e.g. btoast-success-icon or my-custom-icon" />
+              <div class="note mt-1">Layout is inferred automatically from title and icon settings (noIcon/iconClass): title + icon → header row; icon only → side icon; otherwise message-only.</div>
+            </div>
+          </div>
+
+          <div class="col-md-3">
+            <div class="mb-2 fw-semibold">Toast Type</div>
+            <div class="form-check"><input class="form-check-input" type="radio" name="type" id="t-success" value="success" checked><label class="form-check-label" for="t-success">Success</label></div>
+            <div class="form-check"><input class="form-check-input" type="radio" name="type" id="t-info" value="info"><label class="form-check-label" for="t-info">Info</label></div>
+            <div class="form-check"><input class="form-check-input" type="radio" name="type" id="t-warning" value="warning"><label class="form-check-label" for="t-warning">Warning</label></div>
+            <div class="form-check mb-3"><input class="form-check-input" type="radio" name="type" id="t-danger" value="danger"><label class="form-check-label" for="t-danger">Danger</label></div>
+
+            <div class="mb-2 fw-semibold">Position</div>
+            <div class="form-check"><input class="form-check-input" type="radio" name="pos" id="p-tr" value="top-right" checked><label class="form-check-label" for="p-tr">Top Right</label></div>
+            <div class="form-check"><input class="form-check-input" type="radio" name="pos" id="p-br" value="bottom-right"><label class="form-check-label" for="p-br">Bottom Right</label></div>
+            <div class="form-check"><input class="form-check-input" type="radio" name="pos" id="p-bl" value="bottom-left"><label class="form-check-label" for="p-bl">Bottom Left</label></div>
+            <div class="form-check"><input class="form-check-input" type="radio" name="pos" id="p-tl" value="top-left"><label class="form-check-label" for="p-tl">Top Left</label></div>
+            <div class="form-check"><input class="form-check-input" type="radio" name="pos" id="p-tc" value="top-center"><label class="form-check-label" for="p-tc">Top Center</label></div>
+            <div class="form-check"><input class="form-check-input" type="radio" name="pos" id="p-bc" value="bottom-center"><label class="form-check-label" for="p-bc">Bottom Center</label></div>
+          </div>
+
+          <div class="col-md-5">
+            <div class="row g-2">
+              <div class="col-6">
+                <label class="form-label">Show Duration (ms)</label>
+                <input id="delay" type="number" class="form-control" value="4000" min="0" />
+                <div class="note mt-1">0 = sticky</div>
+              </div>
+              <div class="col-6">
+                <label class="form-label">Extended time out (ms)</label>
+                <input id="extendedDelay" type="number" class="form-control" value="1000" min="0" />
+                <div class="note mt-1">(will be enabled in the next step)</div>
+              </div>
+              <div class="col-12 mt-2">
+                <div class="form-check">
+                  <input id="progressBar" class="form-check-input" type="checkbox" />
+                  <label class="form-check-label" for="progressBar">Progress Bar</label>
+                </div>
+                <div class="form-check">
+                  <input id="preventDup" class="form-check-input" type="checkbox" disabled />
+                  <label class="form-check-label" for="preventDup">Prevent Duplicates <span class="note">(coming soon)</span></label>
+                </div>
+                <div class="form-check">
+                  <input id="newestOnTop" class="form-check-input" type="checkbox" disabled />
+                  <label class="form-check-label" for="newestOnTop">Newest on top <span class="note">(coming soon)</span></label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-3 d-flex gap-2">
+          <button id="showBtn" class="btn btn-primary">Show Toast</button>
+          <button id="clearAllBtn" class="btn btn-danger">Clear Toasts</button>
+          <button id="clearLastBtn" class="btn btn-outline-danger">Clear Last Toast</button>
+        </div>
+      </div>
+
+      <div class="note">
+        Note: This control page demonstrates automatic layout (inferred from title and icon settings) and basic options (title, message, position, variant, delay, dismissible, progress bar). Advanced features like prevent duplicates, newest on top, and extended timeout will be added in later versions.
+      </div>
+    </div>
+
+    <!-- Bootstrap Bundle (incl. Popper) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- UMD build of btoast -->
+    <script src="../dist/btoast.umd.js"></script>
+    <script>
+      // All comments must be in English
+      (function(){
+        const $ = (s) => document.querySelector(s);
+        const $$ = (s) => Array.from(document.querySelectorAll(s));
+
+        function currentType(){
+          const r = document.querySelector('input[name="type"]:checked');
+          return r ? r.value : 'success';
+        }
+        function currentPos(){
+          const r = document.querySelector('input[name="pos"]:checked');
+          return r ? r.value : 'top-right';
+        }
+
+        function showToast(){
+          const title = $('#title').value.trim();
+          const msg = $('#message').value.trim() || 'Sample message';
+          const position = currentPos();
+          const delay = parseInt($('#delay').value, 10) || 4000;
+          const dismissible = $('#dismissible').checked;
+          const type = currentType();
+
+          const opts = {
+            title,
+            position,
+            delay,
+            dismissible,
+            progressBar: $('#progressBar').checked,
+            noIcon: $('#noIcon').checked,
+            iconClass: $('#iconClass').value.trim()
+          };
+          const api = btoast[type] || btoast.success;
+          api(msg, opts);
+        }
+
+        function clearAll(){
+          // Hide all visible toasts by asking Bootstrap instances to hide
+          $$('.toast').forEach(el => {
+            const inst = bootstrap.Toast.getOrCreateInstance(el);
+            inst.hide();
+          });
+        }
+        function clearLast(){
+          // Try to hide the last toast in the DOM
+          const all = $$('.toast');
+          const el = all[all.length - 1];
+          if (el){
+            const inst = bootstrap.Toast.getOrCreateInstance(el);
+            inst.hide();
+          }
+        }
+
+        $('#showBtn').addEventListener('click', showToast);
+        $('#clearAllBtn').addEventListener('click', clearAll);
+        $('#clearLastBtn').addEventListener('click', clearLast);
+      })();
+    </script>
+  </body>
+</html>

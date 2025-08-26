@@ -1,0 +1,61 @@
+{
+  "name": "btoast",
+  "version": "0.1.0",
+  "description": "Tiny wrapper around Bootstrap 5 Toast with a toastr-like API (no jQuery).",
+  "license": "MIT",
+  "author": "Nasser Amjadian",
+  "keywords": [
+    "bootstrap",
+    "toast",
+    "toastr",
+    "notification",
+    "vanilla-js",
+    "bootstrap5"
+  ],
+  "sideEffects": false,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Natico/btoast.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Natico/btoast/issues"
+  },
+  "homepage": "https://github.com/Natico/btoast#readme",
+  "unpkg": "dist/btoast.umd.js",
+  "jsdelivr": "dist/btoast.umd.js",
+  "exports": {
+    ".": {
+      "import": "./dist/btoast.es.js",
+      "require": "./dist/btoast.umd.js",
+      "default": "./dist/btoast.umd.js"
+    }
+  },
+  "main": "dist/btoast.umd.js",
+  "module": "dist/btoast.es.js",
+  "style": "dist/btoast.css",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "vite build && npm run build:css",
+    "dev": "vite",
+    "preview": "vite preview",
+    "build:css": "sass src/styles/btoast.scss dist/btoast.css --style=compressed --no-source-map",
+    "dev:css": "sass --watch src/styles/btoast.scss dist/btoast.css --style=expanded --source-map"
+  },
+  "peerDependencies": {
+    "bootstrap": ">=5.0.0"
+  },
+  "engines": {
+    "node": ">=14"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "sass": "^1.90.0",
+    "vite": "^7.1.2"
+  }
+}
