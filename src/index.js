@@ -53,6 +53,13 @@ function normalize(options) {
     dedupeKey: typeof o.dedupeKey === 'string' ? o.dedupeKey : '',
     onDuplicate: o.onDuplicate === 'ignore' ? 'ignore' : 'reshow',
     newestOnTop: !!o.newestOnTop,
+    debug: !!o.debug,
+    onClick: typeof o.onClick === 'function' ? o.onClick : null,
+    dismissOnClick: o.dismissOnClick !== false,
+    approveText: typeof o.approveText === 'string' ? o.approveText : '',
+    denyText: typeof o.denyText === 'string' ? o.denyText : '',
+    onApprove: typeof o.onApprove === 'function' ? o.onApprove : null,
+    onDeny: typeof o.onDeny === 'function' ? o.onDeny : null
   };
 }
 
@@ -142,6 +149,13 @@ function makeToastEl(text, o) {
   const effectiveIconClass = showIcon ? (o.iconClass || `btoast-${o.variant}-icon`) : '';
   const mode = (hasHeader && showIcon) ? 'title-icon' : (showIcon ? 'icon' : 'message');
 
+  const actionsHtml = (o.onApprove || o.onDeny || o.approveText || o.denyText)
+    ? `<div class="mt-2 d-flex gap-2 justify-content-end bt-actions">
+         ${ (o.onDeny || o.denyText) ? `<button type="button" class="btn btn-sm btn-outline-secondary bt-action-deny">${o.denyText || 'Deny'}</button>` : ''}
+         ${ (o.onApprove || o.approveText) ? `<button type="button" class="btn btn-sm btn-primary bt-action-approve">${o.approveText || 'Approve'}</button>` : ''}
+       </div>`
+    : '';
+
   const el = document.createElement('div');
   // base toast shell
   el.className = `toast border-0 rounded-3 shadow-sm overflow-hidden`;
@@ -154,7 +168,7 @@ function makeToastEl(text, o) {
     el.classList.add(...subtleClasses(o.variant).split(' '));
     el.innerHTML = `
       <div class="d-flex align-items-center">
-        <div class="toast-body flex-grow-1">${text}</div>
+        <div class="toast-body flex-grow-1">${text}${actionsHtml}</div>
         ${o.dismissible ? `<button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>` : ''}
       </div>
     `;
@@ -171,7 +185,7 @@ function makeToastEl(text, o) {
     el.innerHTML = `
       <div class="d-flex align-items-stretch">
         ${rail}
-        <div class="toast-body flex-grow-1">${text}</div>
+        <div class="toast-body flex-grow-1">${text}${actionsHtml}</div>
         ${o.dismissible ? `<button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>` : ''}
       </div>
     `;
@@ -193,7 +207,7 @@ function makeToastEl(text, o) {
         <strong class="me-auto">${o.title || ''}</strong>
         ${closeBtn}
       </div>
-      <div class="toast-body ${bodyCls}">${text}</div>
+      <div class="toast-body ${bodyCls}">${text}${actionsHtml}</div>
     `;
     return el;
   }
@@ -213,6 +227,7 @@ function makeToastEl(text, o) {
 export function show(text, options) {
   if (!ensureBootstrap()) return;
   const o = normalize(options);
+  const inferredMode = (o.title && !o.noIcon) ? 'title-icon' : (!o.title && !o.noIcon ? 'icon' : 'message');
   const container = getContainer(o.position);
 
   // Prevent Duplicates
@@ -238,9 +253,48 @@ export function show(text, options) {
   } else {
     container.appendChild(el);
   }
+  // Click behavior (body/header/rail); ignore native close button
+  el.addEventListener('click', (evt) => {
+    const target = evt.target;
+    // If the click originated from a close button or action buttons, let Bootstrap handle it
+    if (target.closest && (target.closest('.btn-close') || target.closest('.bt-actions'))) return;
+    if (typeof o.onClick === 'function') {
+      try { o.onClick(evt, { id: o.id, el }); } catch (_) { /* no-op */ }
+    }
+    if (o.dismissOnClick) {
+      const inst = bootstrap.Toast.getOrCreateInstance(el);
+      inst.hide();
+    }
+  });
   const manageAuto = o.autohide && (o.pauseOnHover || (o.extendedDelay > 0));
   const instance = new bootstrap.Toast(el, { autohide: manageAuto ? false : o.autohide, delay: o.delay });
   const progressCtrl = attachProgress(el, o);
+
+  // Wire approve/deny actions if present
+  const ctx = {
+    id: o.id,
+    el,
+    instance,
+    close: () => instance.hide(),
+    hide: () => instance.hide(),
+    dispose: () => { instance.dispose(); el.remove(); }
+  };
+  const approveBtn = el.querySelector('.bt-action-approve');
+  if (approveBtn) {
+    approveBtn.addEventListener('click', (evt) => {
+      evt.stopPropagation();
+      try { if (typeof o.onApprove === 'function') o.onApprove.call(ctx, evt, ctx); } catch(_) {}
+      return true; // explicit true per requirement
+    });
+  }
+  const denyBtn = el.querySelector('.bt-action-deny');
+  if (denyBtn) {
+    denyBtn.addEventListener('click', (evt) => {
+      evt.stopPropagation();
+      try { if (typeof o.onDeny === 'function') o.onDeny.call(ctx, evt, ctx); } catch(_) {}
+      return false; // explicit false per requirement
+    });
+  }
 
   if (manageAuto) {
     let hideTid = 0;
@@ -266,6 +320,26 @@ export function show(text, options) {
   }
 
   instance.show();
+  if (o.debug) {
+    const payload = {
+      toastId: o.id,
+      state: 'visible',
+      startTime: new Date(),
+      options: { ...o, onClick: o.onClick ? '[Function]' : null },
+      map: {
+        variant: o.variant,
+        position: o.position,
+        mode: inferredMode,
+        classes: {
+          container: container.className,
+          toast: el.className
+        }
+      }
+    };
+    // expose for quick devtools inspection
+    el.__btoastDebug = payload;
+    try { console.log(payload); } catch (_) {}
+  }
   el.addEventListener('hidden.bs.toast', () => el.remove(), { once: true });
 
   return {
