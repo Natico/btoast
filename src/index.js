@@ -48,7 +48,10 @@ function normalize(options) {
     iconClass: o.iconClass || '',
     progressBar: !!o.progressBar,
     extendedDelay: typeof o.extendedDelay === 'number' ? o.extendedDelay : 1000,
-    pauseOnHover: o.pauseOnHover !== false
+    pauseOnHover: o.pauseOnHover !== false,
+    preventDuplicates: !!o.preventDuplicates,
+    dedupeKey: typeof o.dedupeKey === 'string' ? o.dedupeKey : '',
+    onDuplicate: o.onDuplicate === 'ignore' ? 'ignore' : 'reshow'
   };
 }
 
@@ -63,6 +66,13 @@ function subtleClasses(v){
 }
 function solidClasses(v){
   return `bg-${v} text-white`;
+}
+
+function computeKey(text, o){
+  if (o.dedupeKey) return o.dedupeKey;
+  const title = (o.title || '').trim();
+  const body = (text || '').trim();
+  return [o.variant, title, body, o.position].join('|');
 }
 
 // Attach a progress bar to the toast element if enabled
@@ -203,7 +213,25 @@ export function show(text, options) {
   if (!ensureBootstrap()) return;
   const o = normalize(options);
   const container = getContainer(o.position);
+
+  // Prevent Duplicates
+  const key = computeKey(text, o);
+  if (o.preventDuplicates) {
+    const existing = Array.from(container.querySelectorAll('.toast')).find(t => t.dataset && t.dataset.btKey === key);
+    if (existing) {
+      const existingInstance = bootstrap.Toast.getOrCreateInstance(existing);
+      if (o.onDuplicate === 'reshow') existingInstance.show();
+      return {
+        id: existing.id || key,
+        el: existing,
+        hide: () => existingInstance.hide(),
+        dispose: () => { existingInstance.dispose(); existing.remove(); }
+      };
+    }
+  }
+
   const el = makeToastEl(text, o);
+  el.dataset.btKey = key;
   container.appendChild(el);
   const manageAuto = o.autohide && (o.pauseOnHover || (o.extendedDelay > 0));
   const instance = new bootstrap.Toast(el, { autohide: manageAuto ? false : o.autohide, delay: o.delay });

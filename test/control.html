@@ -85,8 +85,17 @@
                   <label class="form-check-label" for="progressBar">Progress Bar</label>
                 </div>
                 <div class="form-check">
-                  <input id="preventDup" class="form-check-input" type="checkbox" disabled />
-                  <label class="form-check-label" for="preventDup">Prevent Duplicates <span class="note">(coming soon)</span></label>
+                  <input id="preventDup" class="form-check-input" type="checkbox" />
+                  <label class="form-check-label" for="preventDup">Prevent Duplicates</label>
+                </div>
+                <div class="mt-2 ps-4">
+                  <label class="form-label mb-1">Dedupe key (optional)</label>
+                  <input id="dedupeKey" type="text" class="form-control" placeholder="e.g. save-success" />
+                  <label class="form-label mb-1 mt-2">On duplicate</label>
+                  <select id="onDuplicate" class="form-select">
+                    <option value="reshow" selected>Reshow existing</option>
+                    <option value="ignore">Ignore new</option>
+                  </select>
                 </div>
                 <div class="form-check">
                   <input id="newestOnTop" class="form-check-input" type="checkbox" disabled />
@@ -105,7 +114,7 @@
       </div>
 
       <div class="note">
-        Note: This control page demonstrates automatic layout (inferred from title and icon settings) and options including title, message, position, variant, delay, extended timeout, pause on hover, dismissible, and progress bar. Advanced features like prevent duplicates and newest on top will be added in later versions.
+        Note: This control page demonstrates automatic layout (inferred from title and icon settings) and options including title, message, position, variant, delay, extended timeout, pause on hover, dismissible, progress bar, and prevent duplicates (with optional dedupe key and behavior). "Newest on top" will be added in a later version.
       </div>
     </div>
 
@@ -146,7 +155,10 @@
             dismissible,
             progressBar: $('#progressBar').checked,
             noIcon: $('#noIcon').checked,
-            iconClass: $('#iconClass').value.trim()
+            iconClass: $('#iconClass').value.trim(),
+            preventDuplicates: $('#preventDup').checked,
+            dedupeKey: $('#dedupeKey').value.trim(),
+            onDuplicate: $('#onDuplicate').value
           };
           const api = btoast[type] || btoast.success;
           api(msg, opts);
