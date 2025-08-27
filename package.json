@@ -1,6 +1,6 @@
 {
   "name": "btoast-js",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Tiny wrapper around Bootstrap 5 Toast with a toastr-like API (no jQuery).",
   "license": "MIT",
   "author": "Nasser Amjadian",
