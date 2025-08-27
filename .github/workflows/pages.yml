@@ -41,6 +41,9 @@ jobs:
           cp test/control.html site/index.html
           # کنترل از ../dist/ استفاده می‌کند؛ برای ریشه‌ی سایت باید ./dist/ شود
           sed -i 's+../dist/+./dist/+g' site/index.html || true
+          # 🔒 Bootstrap را به 5.3.3 پین کن (چه @5/dist باشد چه @5.3/dist)
+          sed -i 's+@5/dist+@5.3.3/dist+g' site/index.html || true
+          sed -i 's+@5.3/dist+@5.3.3/dist+g' site/index.html || true
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
