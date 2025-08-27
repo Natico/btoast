@@ -46,6 +46,15 @@ btoast ships a small optional stylesheet (spacing, default icon sizes, icon SVGs
 
 ---
 
+## 🚀 Demo
+
+Try it live on GitHub Pages:  
+👉 [btoast-js Demo](https://natico.github.io/btoast-js/)
+
+This demo page is built automatically from the repo and lets you interactively test all options (position, icons, actions, progress bar, RTL, etc.).
+
+---
+
 ## 🚀 Quick start
 
 ### UMD (script tag)
