@@ -39,9 +39,16 @@ jobs:
           mkdir -p site/dist
           cp -r dist/* site/dist/
           cp test/control.html site/index.html
+          # Normalize relative dist paths for GitHub Pages root
           sed -i 's+../dist/+./dist/+g' site/index.html || true
-          sed -i 's+@5/dist+@5.3.3/dist+g' site/index.html || true
-          sed -i 's+@5.3/dist+@5.3.3/dist+g' site/index.html || true
+
+          # Pin any Bootstrap @5 / @5.X / @5.X.Y reference to 5.3.3
+          sed -E -i "s/@5(\.[0-9]+){0,2}\/dist/@5.3.3\/dist/g" site/index.html
+
+          # Debug: show Bootstrap CDN lines after pinning
+          echo '--- Bootstrap lines after pinning ---'
+          grep -n "cdn.jsdelivr.net/npm/bootstrap" site/index.html || true
+          echo '------------------------------------'
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
