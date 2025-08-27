@@ -42,6 +42,9 @@ jobs:
           # کنترل از ../dist/ استفاده می‌کند؛ برای ریشه‌ی سایت باید ./dist/ شود
           sed -i 's+../dist/+./dist/+g' site/index.html || true
 
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
