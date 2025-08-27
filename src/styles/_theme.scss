@@ -46,7 +46,26 @@
 }
 
 // If someone flips direction to RTL on the container, mirror the radii
+// If someone flips direction to RTL on the container, mirror the radii
 [dir='rtl'] .toast {
+  .d-flex.align-items-stretch {
+    > :first-child {
+      border-top-right-radius: inherit;
+      border-bottom-right-radius: inherit;
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+    }
+    > .toast-body {
+      border-top-left-radius: inherit;
+      border-bottom-left-radius: inherit;
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+  }
+}
+
+// If dir is set directly on the toast element, mirror radii similarly
+.toast[dir='rtl'] {
   .d-flex.align-items-stretch {
     > :first-child {
       border-top-right-radius: inherit;

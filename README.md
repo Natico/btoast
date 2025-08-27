@@ -19,6 +19,7 @@ A tiny wrapper around **Bootstrap 5 Toasts** that makes them feel like toastr—
 - **Duplicates**: `preventDuplicates`, `dedupeKey`, `onDuplicate: 'reshow'|'ignore'`.
 - **Ordering**: `newestOnTop`.
 - **Debug**: opt‑in console payload (`debug: true`).
+- **RTL per-toast**: set `rtl: true` to flip direction only on that toast (not the whole page).
 - **No jQuery**, minimal footprint.
 
 ---
@@ -107,6 +108,7 @@ success('Saved!', { title: 'Success' });
 | `onApprove` | `(evt, ctx) => any` | `null` | Called when Approve is clicked. Bound `this` is the toast context `{ id, el, instance, close(), dispose() }`. Returns `true` internally after execution. |
 | `onDeny` | `(evt, ctx) => any` | `null` | Called when Deny is clicked. Same context binding; returns `false` internally after execution. |
 | `debug` | `boolean` | `false` | Logs a structured payload after `show()`. Also available on `el.__btoastDebug`. |
+| `rtl` | `boolean` | `false` | If `true`, sets `dir="rtl"` on the toast element only (per-toast RTL support). |
 
 > **Layout inference**: If `title` is set and icons are enabled → *title-icon*; if only icon is enabled → *icon*; otherwise → *message*.
 

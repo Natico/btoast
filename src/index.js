@@ -59,7 +59,8 @@ function normalize(options) {
     approveText: typeof o.approveText === 'string' ? o.approveText : '',
     denyText: typeof o.denyText === 'string' ? o.denyText : '',
     onApprove: typeof o.onApprove === 'function' ? o.onApprove : null,
-    onDeny: typeof o.onDeny === 'function' ? o.onDeny : null
+    onDeny: typeof o.onDeny === 'function' ? o.onDeny : null,
+    rtl: !!o.rtl,
   };
 }
 
@@ -169,7 +170,7 @@ function makeToastEl(text, o) {
     el.innerHTML = `
       <div class="d-flex align-items-center">
         <div class="toast-body flex-grow-1">${text}${actionsHtml}</div>
-        ${o.dismissible ? `<button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>` : ''}
+        ${o.dismissible ? `<button type="button" class="btn-close mx-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>` : ''}
       </div>
     `;
     return el;
@@ -186,7 +187,7 @@ function makeToastEl(text, o) {
       <div class="d-flex align-items-stretch">
         ${rail}
         <div class="toast-body flex-grow-1">${text}${actionsHtml}</div>
-        ${o.dismissible ? `<button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>` : ''}
+        ${o.dismissible ? `<button type="button" class="btn-close mx-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>` : ''}
       </div>
     `;
     return el;
@@ -203,7 +204,7 @@ function makeToastEl(text, o) {
 
     el.innerHTML = `
       <div class="toast-header ${headerCls}">
-        ${showIcon ? `<span class="me-2 d-inline-flex align-items-center bt-icon ${effectiveIconClass}"></span>` : ''}
+        ${showIcon ? `<span class=" d-inline-flex align-items-center bt-icon ${effectiveIconClass}"></span>` : ''}
         <strong class="me-auto">${o.title || ''}</strong>
         ${closeBtn}
       </div>
@@ -218,7 +219,7 @@ function makeToastEl(text, o) {
   el.innerHTML = `
     <div class="d-flex align-items-center">
       <div class="toast-body flex-grow-1">${text}</div>
-      ${o.dismissible ? '<button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>' : ''}
+      ${o.dismissible ? '<button type="button" class="btn-close mx-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>' : ''}
     </div>
   `;
   return el;
@@ -247,6 +248,9 @@ export function show(text, options) {
   }
 
   const el = makeToastEl(text, o);
+  if (o.rtl) {
+    el.setAttribute('dir', 'rtl');
+  }
   el.dataset.btKey = key;
   if (o.newestOnTop && container.firstChild) {
     container.insertBefore(el, container.firstChild);
