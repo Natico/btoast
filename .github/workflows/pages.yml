@@ -42,8 +42,8 @@ jobs:
           # Normalize relative dist paths for GitHub Pages root
           sed -i 's+../dist/+./dist/+g' site/index.html || true
 
-          # Pin any Bootstrap @5 / @5.X / @5.X.Y reference to 5.3.3
-          sed -E -i "s/@5(\.[0-9]+){0,2}\/dist/@5.3.3\/dist/g" site/index.html
+          # Pin Bootstrap to 5.3.3 (handles @5, @5.3, @5.3.3, even @5.3./dist)
+          sed -E -i "s/@5(\.[0-9]+){0,2}\.?\/dist/@5.3.3\/dist/g" site/index.html
 
           # Debug: show Bootstrap CDN lines after pinning
           echo '--- Bootstrap lines after pinning ---'
