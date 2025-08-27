@@ -1,4 +1,4 @@
-# btoast
+# btoast-js
 
 A tiny wrapper around **Bootstrap 5 Toasts** that makes them feel like toastr—zero jQuery, supports **UMD & ESM**, and comes with optional Sass/CSS for icons and tidy spacing.
 
@@ -27,21 +27,21 @@ A tiny wrapper around **Bootstrap 5 Toasts** that makes them feel like toastr—
 
 **Via npm (recommended for apps/bundlers):**
 ```bash
-npm i btoast
+npm i btoast-js
 ```
 
 **Via CDN (UMD build):**
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/btoast/dist/btoast.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/btoast-js/dist/btoast.css">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/btoast/dist/btoast.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/btoast-js/dist/btoast.umd.js"></script>
 ```
 > Replace versions as needed. Bootstrap **bundle** is required (for Toast).
 
 ### CSS
 btoast ships a small optional stylesheet (spacing, default icon sizes, icon SVGs). Load it if you want ready‑to‑use icons/spacing.
-- npm/ESM: `import 'btoast/dist/btoast.css'`
-- CDN: `<link rel="stylesheet" href=".../btoast.css">`
+- npm/ESM: `import 'btoast-js/dist/btoast.css'`
+- CDN: `<link rel="stylesheet" href=".../btoast-js.css">`
 
 ---
 
@@ -64,8 +64,8 @@ btoast ships a small optional stylesheet (spacing, default icon sizes, icon SVGs
 
 ### ESM (React/Vue/Vite/etc.)
 ```js
-import { success } from 'btoast';
-import 'btoast/dist/btoast.css';
+import { success } from 'btoast-js';
+import 'btoast-js/dist/btoast.css';
 
 success('Welcome!', { title: 'Hello', delay: 4000, progressBar: true });
 ```
@@ -76,7 +76,7 @@ success('Welcome!', { title: 'Hello', delay: 4000, progressBar: true });
 btoast exposes named helpers for each Bootstrap variant, plus a generic `show`.
 
 ```js
-import { show, success, info, warning, danger, primary, secondary, dark, light } from 'btoast';
+import { show, success, info, warning, danger, primary, secondary, dark, light } from 'btoast-js';
 
 show('Plain message');
 success('Saved!', { title: 'Success' });

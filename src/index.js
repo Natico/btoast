@@ -1,4 +1,4 @@
-/*! btoast - MIT */
+/*! btoast-js - MIT */
 // All comments must be in English
 
 const POS2CLASS = {
@@ -15,7 +15,7 @@ const containers = new Map();
 
 function ensureBootstrap() {
   if (!('bootstrap' in window) || !window.bootstrap || !window.bootstrap.Toast) {
-    console.warn('[btoast] Bootstrap 5 JS not found. Include bootstrap.bundle.min.js before using btoast.');
+    console.warn('[btoast-js] Bootstrap 5 JS not found. Include bootstrap.bundle.min.js before using btoast-js.');
     return false;
   }
   return true;

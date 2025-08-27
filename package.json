@@ -1,5 +1,5 @@
 {
-  "name": "btoast",
+  "name": "btoast-js",
   "version": "0.1.0",
   "description": "Tiny wrapper around Bootstrap 5 Toast with a toastr-like API (no jQuery).",
   "license": "MIT",
@@ -15,12 +15,12 @@
   "sideEffects": false,
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Natico/btoast.git"
+    "url": "git+https://github.com/Natico/btoast-js.git"
   },
   "bugs": {
-    "url": "https://github.com/Natico/btoast/issues"
+    "url": "https://github.com/Natico/btoast-js/issues"
   },
-  "homepage": "https://github.com/Natico/btoast#readme",
+  "homepage": "https://github.com/Natico/btoast-js#readme",
   "unpkg": "dist/btoast.umd.js",
   "jsdelivr": "dist/btoast.umd.js",
   "exports": {
